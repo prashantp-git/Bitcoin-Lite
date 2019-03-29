@@ -197,6 +197,20 @@ module.exports = class Block {
     // 3) Calculate the miner's transaction fee, determined by the difference between the inputs and the outputs.
     //    The addTransactionFee method might help you with this part.
 
+    this.transactions.set(tx.id,tx);
+    let totalIn = 0;
+    tx.inputs.forEach(input => {
+      if(this.utxos){
+        let txUXTOs = this.utxos[input.txID];
+        if (txUXTOs && txUXTOs[input.outputIndex]) {
+          totalIn += txUXTOs[input.outputIndex].amount;
+          delete txUXTOs[input.outputIndex];
+       }
+      }
+    });
+    this.utxos[tx.id] = tx.outputs;
+    let totalOut = tx.totalOutput();
+    this.addTransactionFee(totalIn-totalOut);
   }
 
   /**

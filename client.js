@@ -66,7 +66,7 @@ module.exports = class Client extends EventEmitter {
     let tx = new Transaction({
       inputs: inputs,
       outputs: outputs,
-    });
+    });    
     this.broadcast(POST, tx);
   }
 

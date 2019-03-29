@@ -99,13 +99,29 @@ module.exports = class Wallet {
     // Return an object containing the array of inputs and the
     // amount of change needed.
 
-
-    // Currently returning default values.
+    
+    let inputs =  [];
+    let changeAmt = 0;
+    let currBalance = 0;
+    while(this.coins.length){
+      let {output, txID, outputIndex} = this.coins.pop();
+      currBalance += output.amount;
+      let kp = this.addresses[output.address];
+      let sig = utils.sign(kp.private, output);
+      inputs.push({
+        txID: txID,
+        outputIndex: outputIndex,
+        pubKey: kp.public,
+        sig: sig 
+      });
+      if(currBalance >= amount){
+        break;
+      }
+    }
     return {
-      inputs: [],
-      changeAmt: 0,
+      inputs: inputs,
+      changeAmt: currBalance-amount
     };
-
   }
 
   /**

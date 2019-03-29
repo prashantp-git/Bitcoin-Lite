@@ -98,6 +98,13 @@ module.exports = class Miner extends Client {
       // After that, create a new block and start searching for a proof.
       // The 'startNewSearch' method might be useful for this last step.
 
+      if(this.currentBlock.verifyProof()){
+        let coinbaseTX = this.currentBlock.coinbaseTX;
+        this.wallet.addUTXO(coinbaseTX.outputs[0], coinbaseTX.id, 0);
+        this.announceProof();
+        this.startNewSearch(true);
+        break;
+      }
       this.currentBlock.proof++;
     }
     // If we are testing, don't continue the search.
